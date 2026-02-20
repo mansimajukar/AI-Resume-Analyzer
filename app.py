@@ -5,9 +5,7 @@ import PyPDF2
 st.set_page_config(page_title="ATS Resume Matcher", layout="centered")
 st.title("📊 ATS Resume Matching System")
 
-# -----------------------------
-# FUNCTION TO READ PDF
-# -----------------------------
+
 def extract_text_from_pdf(uploaded_file):
     reader = PyPDF2.PdfReader(uploaded_file)
     text = ""
@@ -16,10 +14,6 @@ def extract_text_from_pdf(uploaded_file):
             text += page.extract_text()
     return text
 
-
-# -----------------------------
-# INPUT SECTION
-# -----------------------------
 
 st.subheader("📄 Job Description Input")
 
@@ -49,10 +43,6 @@ else:
         resume_text = ""
 
 
-# -----------------------------
-# CALCULATION BUTTON
-# -----------------------------
-
 if st.button("Calculate ATS Score"):
 
     if jd_text.strip() == "" or resume_text.strip() == "":
@@ -62,9 +52,7 @@ if st.button("Calculate ATS Score"):
         jd_text = jd_text.lower()
         resume_text = resume_text.lower()
 
-        # -----------------------------
-        # DATABASES
-        # -----------------------------
+    
 
         skills_db = [
             "python", "sql", "excel", "power bi",
@@ -93,9 +81,7 @@ if st.button("Calculate ATS Score"):
         final_score = 0
         total_weight = 0
 
-        # -----------------------------
-        # 1️⃣ SKILLS (50%)
-        # -----------------------------
+       
         jd_skills = [s for s in skills_db if s in jd_text]
         resume_skills = [s for s in skills_db if s in resume_text]
         matched_skills = list(set(jd_skills) & set(resume_skills))
@@ -105,9 +91,7 @@ if st.button("Calculate ATS Score"):
         final_score += 0.5 * skill_score
         total_weight += 0.5
 
-        # -----------------------------
-        # 2️⃣ EDUCATION (20%)
-        # -----------------------------
+      
         jd_edu = [e for e in education_db if e in jd_text]
 
         if jd_edu:
@@ -120,9 +104,7 @@ if st.button("Calculate ATS Score"):
         else:
             edu_score = None
 
-        # -----------------------------
-        # 3️⃣ EXPERIENCE (20%)
-        # -----------------------------
+       
         jd_exp_match = re.search(r'(\d+)\+?\s*years?', jd_text)
 
         if jd_exp_match:
@@ -137,9 +119,7 @@ if st.button("Calculate ATS Score"):
         else:
             exp_score = None
 
-        # -----------------------------
-        # 4️⃣ OTHER (10%)
-        # -----------------------------
+       
         jd_other = [o for o in other_db if o in jd_text]
 
         if jd_other:
@@ -152,14 +132,10 @@ if st.button("Calculate ATS Score"):
         else:
             other_score = None
 
-        # -----------------------------
-        # NORMALIZE SCORE
-        # -----------------------------
+        
         final_percentage = round((final_score / total_weight) * 100, 2)
 
-        # -----------------------------
-        # DISPLAY RESULTS
-        # -----------------------------
+       
         st.subheader("📋 Matching Report")
 
         st.write("### 🔹 Matched Skills:", matched_skills)
@@ -176,3 +152,4 @@ if st.button("Calculate ATS Score"):
             st.write("### 💼 Experience: Not Required in JD")
 
         st.success(f"🔥 Final ATS Score: {final_percentage}%")
+
